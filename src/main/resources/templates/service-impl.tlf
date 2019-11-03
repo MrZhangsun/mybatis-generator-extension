@@ -1,0 +1,7 @@
+  Dear [(${father.name})],
+
+  Please find attached the results of the report you requested
+  with name "[(${father.name})]".
+
+  Sincerely,
+    The Reporter

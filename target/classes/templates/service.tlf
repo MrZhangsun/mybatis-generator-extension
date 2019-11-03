@@ -1,0 +1,20 @@
+package [(${targetPackage})];
+
+/**
+ * Functions: [(${entity})] Service Interface Layer.
+ *
+ * @author [(${author})]
+ * @date [(${date})]
+ * @since [(${version})]
+ */
+public interface [(${entity})]Service {
+
+    /**
+     * insert [(${entity})] record
+     *
+     * @param form record details
+     * @return record primary key in database;
+     */
+    String insert([(${entity})]Form form);
+
+}
