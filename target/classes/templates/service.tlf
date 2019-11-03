@@ -1,5 +1,7 @@
 package [(${targetPackage})];
 
+import com.github.pagehelper.PageInfo;
+
 /**
  * Functions: [(${entity})] Service Interface Layer.
  *
@@ -13,8 +15,46 @@ public interface [(${entity})]Service {
      * insert [(${entity})] record
      *
      * @param form record details
-     * @return record primary key in database;
+     * @return record primary key in database
      */
-    String insert([(${entity})]Form form);
+    String insert([(${entity})]Form form) throws Exception;
+
+    /**
+     * delete [(${entity})] record by primary key in database
+     *
+     * @param id primary key in database
+     */
+    void delete(String id) throws Exception;
+
+    /**
+     * update [(${entity})] record by primary key
+     *
+     * @param form record primary key and details
+     */
+    void update([(${entity})]Form form) throws Exception;
+
+    /**
+     * select [(${entity})] record by primary key
+     *
+     * @param id primary key in database
+     * @return [(${entity})] record transfer object
+     */
+    [(${entity})]DTO selectByPrimaryKey(String id) throws Exception;
+
+    /**
+     * conditional select [(${entity})] records by page
+     *
+     * @param form page and conditions information
+     * @return [(${entity})] record transfer object page list
+     */
+    PageInfo<[(${entity})]DTO> conditionalSearchByPage([(${entity})]Form form);
+
+    /**
+     * conditional select [(${entity})] records
+     *
+     * @param form conditions information
+     * @return [(${entity})] record transfer object
+     */
+    List<[(${entity})]DTO> conditionalSearch([(${entity})]Form form);
 
 }

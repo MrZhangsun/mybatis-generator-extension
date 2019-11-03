@@ -1,26 +1,30 @@
 package site.zhangsun.generator.config;
 
+import lombok.Data;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
-import org.mybatis.generator.internal.DefaultCommentGenerator;
 import org.mybatis.generator.internal.util.StringUtility;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.SimpleFormatter;
 
 import static java.lang.System.getProperty;
 
+@Data
 public class MyCommentConfig implements CommentGenerator {
 
     private String author;
     private String date;
     private String since;
+    /**
+     * 用户接收XML中配置的属性
+     * @see MyCommentConfig#addConfigurationProperties(Properties)
+     */
     private Properties properties;
     private boolean suppressDate = false;
     private boolean suppressAllComments = false;
@@ -28,10 +32,10 @@ public class MyCommentConfig implements CommentGenerator {
     private SimpleDateFormat dateFormat;
 
     public MyCommentConfig() {
+        super();
         this.properties = new Properties();
         this.author = getProperty("user.name");
         this.since = "1.0.0-SNAPSHOT";
-        this.date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
     }
 
     public void addJavaFileComment(CompilationUnit compilationUnit) {
@@ -69,6 +73,7 @@ public class MyCommentConfig implements CommentGenerator {
         String dateFormatString = properties.getProperty("dateFormat");
         if (StringUtility.stringHasValue(dateFormatString)) {
             this.dateFormat = new SimpleDateFormat(dateFormatString);
+            this.date = dateFormat.format(new Date());
         }
 
     }

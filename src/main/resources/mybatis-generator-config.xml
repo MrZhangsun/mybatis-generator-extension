@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE generatorConfiguration
         PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
-        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+        "/Users/zhangsunjiankun/Documents/workspace/github/mybatis-generator/src/main/resources/dtd/mybatis-generator-config.dtd">
 <generatorConfiguration>
 
     <context id="mysql" defaultModelType="hierarchical" targetRuntime="MyBatis3" >
@@ -12,6 +12,8 @@
             <property name="suppressDate" value="false"/>
             <property name="suppressAllComments" value="false"/>
             <property name="addRemarkComments" value="true"/>
+            <property name="dateFormat" value="yyyy-MM-dd hh:mm:ss"/>
+            <property name="name" value="yyyy-MM-dd hh:mm:ss"/>
         </commentGenerator>
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/mybatis_generator?characterEncoding=UTF8"
                         userId="root" password="123456">

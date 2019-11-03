@@ -1,0 +1,4 @@
+package site.zhangsun.generator.process;
+
+public class ControllerLayerProcess {
+}

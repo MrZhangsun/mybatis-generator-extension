@@ -4,19 +4,16 @@ import lombok.Data;
 import org.thymeleaf.context.IContext;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 @Data
 public class TemplateContext<T> implements IContext {
 
     private Locale locale;
     private T template;
-
-    public TemplateContext() {
-
-    }
 
     @Override
     public Locale getLocale() {
@@ -28,39 +25,34 @@ public class TemplateContext<T> implements IContext {
 
     @Override
     public boolean containsVariable(String s) {
-        return false;
+        return this.getVariableNames().contains(s);
     }
 
     @Override
     public Set<String> getVariableNames() {
-        Field[] declaredFields = template.getClass().getDeclaredFields();
-        Set<String> names = new HashSet<>(declaredFields.length);
-        for (Field field : declaredFields) {
-            String name = field.getName();
-            names.add(name);
+
+        Class model = template.getClass();
+        Set<String> names = new HashSet<>(10);
+        while (model != null) {
+            Field[] fields = model.getDeclaredFields();
+            for (Field field : fields) {
+                names.add(field.getName());
+            }
+            model = model.getSuperclass();
         }
         return names;
     }
 
     @Override
     public Object getVariable(String filed) {
-        Method[] declaredMethods = template.getClass().getDeclaredMethods();
-        for (Method method : declaredMethods) {
-            String methodName = method.getName();
-//            try {
-//                Object invoke = method.invoke(filed);
-//            } catch (Exception e) {
-//
-//
-//            }
+        filed = "get" + filed.substring(0, 1).toUpperCase() + filed.substring(1);
+        try {
+            Method method = template.getClass().getMethod(filed);
+            return method.invoke(template);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return null;
-    }
 
-    public static void main(String[] args) throws NoSuchMethodException {
-        Template template = new ServiceTemplate();
-        template.setAuthor("Murphy");
-        Method method = template.getClass().getDeclaredMethod("getAuthor", String.class);
-        method.invoke()
+        return null;
     }
 }

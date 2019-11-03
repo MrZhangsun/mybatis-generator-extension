@@ -11,13 +11,12 @@ import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.mybatis.generator.exception.XMLParserException;
 import org.mybatis.generator.internal.DefaultShellCallback;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafTemplateAvailabilityProvider;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.Thymeleaf;
-import org.thymeleaf.context.IContext;
 import site.zhangsun.generator.callback.CallBack;
-import site.zhangsun.generator.config.ThymeLeafConfig;
+import site.zhangsun.generator.config.MyCommentConfig;
+import site.zhangsun.generator.config.ServiceTemplate;
+import site.zhangsun.generator.config.Template;
+import site.zhangsun.generator.config.TemplateContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,10 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static site.zhangsun.generator.config.ThymeLeafConfig.getTemplateEngine;
+
 public class Main {
 
     public static void main(String[] args) throws InvalidConfigurationException, InterruptedException,
             SQLException, IOException, XMLParserException {
+
+        // DAO 生成
         List<String> warnings = new ArrayList<>();
         boolean overwrite = true;
         ConfigurationParser cp = new ConfigurationParser(warnings);
@@ -40,15 +43,34 @@ public class Main {
         ProgressCallback progressCallback = new CallBack();
         myBatisGenerator.generate(progressCallback);
 
+        // Service 接口生成
         List<GeneratedJavaFile> files = myBatisGenerator.getGeneratedJavaFiles();
         GeneratedJavaFile file = files.get(0);
         List<GeneratedXmlFile> xmlFiles = myBatisGenerator.getGeneratedXmlFiles();
         boolean mergeSupported = callback.isMergeSupported();
         Context mysql = config.getContext("mysql");
         List<TableConfiguration> tables = mysql.getTableConfigurations();
-        tables.forEach(table -> {
-            String tableName = table.getTableName();
 
+        // site.zhangsun.generator.service
+        String serviceTargetPackage = mysql.getJavaClientGeneratorConfiguration().getTargetPackage().replace("mapper", "service");
+        String targetProject = mysql.getJavaClientGeneratorConfiguration().getTargetProject();
+        MyCommentConfig commentGenerator = (MyCommentConfig) mysql.getCommentGenerator();
+
+        tables.forEach(table -> {
+            String domainObjectName = table.getDomainObjectName();
+            String shortName = domainObjectName.replace("Entity", "");
+            TemplateEngine templateEngine = getTemplateEngine();
+            TemplateContext<Template> context = new TemplateContext<>();
+
+            Template service = new ServiceTemplate();
+            service.setAuthor(commentGenerator.getAuthor());
+            service.setEntity(shortName);
+            service.setTargetPackage(serviceTargetPackage);
+            service.setVersion(commentGenerator.getSince());
+            service.setDate(commentGenerator.getDate());
+            context.setTemplate(service);
+            String code = templateEngine.process("service", context);
+            System.out.println(code);
         });
 
     }
